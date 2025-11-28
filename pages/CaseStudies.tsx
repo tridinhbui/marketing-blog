@@ -1,11 +1,22 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { BLOG_POSTS } from '../data/mockData';
+import { BlogPost } from '../types';
 import CaseStudyCard from '../components/CaseStudyCard';
 import { Category } from '../types';
 import { Filter, X, ArrowLeftRight } from 'lucide-react';
 
 const CaseStudies: React.FC = () => {
-  const allCaseStudies = BLOG_POSTS.filter(post => post.category === Category.CASE_STUDY);
+  const [posts, setPosts] = useState<BlogPost[]>(BLOG_POSTS);
+
+  // Load posts from localStorage on mount
+  useEffect(() => {
+    const storedPosts = localStorage.getItem('blogPosts');
+    if (storedPosts) {
+      setPosts(JSON.parse(storedPosts));
+    }
+  }, []);
+
+  const allCaseStudies = posts.filter(post => post.category === Category.CASE_STUDY);
   
   const [filter, setFilter] = useState('All');
   const [compareMode, setCompareMode] = useState(false);

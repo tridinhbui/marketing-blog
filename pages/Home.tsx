@@ -1,15 +1,25 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { BLOG_POSTS } from '../data/mockData';
+import { BlogPost } from '../types';
 import PostCard from '../components/PostCard';
 import { ArrowRight, Mail } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 const Home: React.FC = () => {
   const [email, setEmail] = useState('');
+  const [posts, setPosts] = useState<BlogPost[]>(BLOG_POSTS);
+
+  // Load posts from localStorage on mount
+  useEffect(() => {
+    const storedPosts = localStorage.getItem('blogPosts');
+    if (storedPosts) {
+      setPosts(JSON.parse(storedPosts));
+    }
+  }, []);
   
-  const featuredPost = BLOG_POSTS.find(p => p.isFeatured) || BLOG_POSTS[0];
-  const secondaryPosts = BLOG_POSTS.filter(p => p.id !== featuredPost.id).slice(0, 2);
-  const listPosts = BLOG_POSTS.filter(p => p.id !== featuredPost.id).slice(2, 6);
+  const featuredPost = posts.find(p => p.isFeatured) || posts[0];
+  const secondaryPosts = posts.filter(p => p.id !== featuredPost.id).slice(0, 2);
+  const listPosts = posts.filter(p => p.id !== featuredPost.id).slice(2, 6);
 
   const handleSubscribe = (e: React.FormEvent) => {
     e.preventDefault();

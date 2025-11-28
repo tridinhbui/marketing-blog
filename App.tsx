@@ -1,6 +1,7 @@
 import React from 'react';
 import { HashRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 import { ThemeProvider } from './context/ThemeContext';
+import { AuthProvider } from './context/AuthContext';
 import Layout from './components/Layout';
 import Home from './pages/Home';
 import Blog from './pages/Blog';
@@ -9,6 +10,9 @@ import PostDetail from './pages/PostDetail';
 import About from './pages/About';
 import Resources from './pages/Resources';
 import Contact from './pages/Contact';
+import Login from './pages/Login';
+import Register from './pages/Register';
+import AdminDashboard from './pages/AdminDashboard';
 
 // Scroll to top helper
 const ScrollToTop = () => {
@@ -24,20 +28,28 @@ const ScrollToTop = () => {
 const App: React.FC = () => {
   return (
     <ThemeProvider>
-      <Router>
-        <ScrollToTop />
-        <Layout>
+      <AuthProvider>
+        <Router>
+          <ScrollToTop />
           <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/blog" element={<Blog />} />
-            <Route path="/case-studies" element={<CaseStudies />} />
-            <Route path="/post/:id" element={<PostDetail />} />
-            <Route path="/about" element={<About />} />
-            <Route path="/resources" element={<Resources />} />
-            <Route path="/contact" element={<Contact />} />
+            {/* Auth Routes - No Layout */}
+            <Route path="/login" element={<Login />} />
+            <Route path="/register" element={<Register />} />
+            
+            {/* Protected Admin Route - No Layout */}
+            <Route path="/admin" element={<AdminDashboard />} />
+            
+            {/* Public Routes - With Layout */}
+            <Route path="/" element={<Layout><Home /></Layout>} />
+            <Route path="/blog" element={<Layout><Blog /></Layout>} />
+            <Route path="/case-studies" element={<Layout><CaseStudies /></Layout>} />
+            <Route path="/post/:id" element={<Layout><PostDetail /></Layout>} />
+            <Route path="/about" element={<Layout><About /></Layout>} />
+            <Route path="/resources" element={<Layout><Resources /></Layout>} />
+            <Route path="/contact" element={<Layout><Contact /></Layout>} />
           </Routes>
-        </Layout>
-      </Router>
+        </Router>
+      </AuthProvider>
     </ThemeProvider>
   );
 };

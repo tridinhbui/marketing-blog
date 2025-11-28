@@ -1,8 +1,8 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { BLOG_POSTS } from '../data/mockData';
 import PostCard from '../components/PostCard';
-import { Category } from '../types';
+import { Category, BlogPost } from '../types';
 import { Search, Filter } from 'lucide-react';
 
 const Blog: React.FC = () => {
@@ -11,11 +11,20 @@ const Blog: React.FC = () => {
   
   const [activeCategory, setActiveCategory] = useState<string>(categoryParam || 'All');
   const [searchQuery, setSearchQuery] = useState('');
+  const [posts, setPosts] = useState<BlogPost[]>(BLOG_POSTS);
+
+  // Load posts from localStorage on mount
+  useEffect(() => {
+    const storedPosts = localStorage.getItem('blogPosts');
+    if (storedPosts) {
+      setPosts(JSON.parse(storedPosts));
+    }
+  }, []);
 
   const categories = ['All', ...Object.values(Category)];
 
   const filteredPosts = useMemo(() => {
-    return BLOG_POSTS.filter(post => {
+    return posts.filter(post => {
       const matchesCategory = activeCategory === 'All' || post.category === activeCategory;
       const matchesSearch = post.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
                             post.subtitle.toLowerCase().includes(searchQuery.toLowerCase()) ||

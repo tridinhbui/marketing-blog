@@ -1,14 +1,17 @@
 import React, { useState } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useTheme } from '../context/ThemeContext';
-import { Moon, Sun, Menu, X, Search, ArrowRight } from 'lucide-react';
+import { useAuth } from '../context/AuthContext';
+import { Moon, Sun, Menu, X, Search, ArrowRight, LogIn, LogOut, LayoutDashboard, User } from 'lucide-react';
 import TriBot from './TriBot';
 
 const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { theme, toggleTheme } = useTheme();
+  const { user, isAdmin, isAuthenticated, logout } = useAuth();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const location = useLocation();
+  const navigate = useNavigate();
 
   const navLinks = [
     { name: 'Home', path: '/' },
@@ -52,6 +55,42 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
               ))}
               
               <div className="h-6 w-px bg-slate-200 dark:bg-slate-800 mx-4"></div>
+
+              {/* Auth Buttons */}
+              {isAuthenticated ? (
+                <>
+                  {isAdmin && (
+                    <Link
+                      to="/admin"
+                      className="p-2 text-slate-500 hover:text-black dark:hover:text-white transition-all duration-300 hover:scale-110"
+                      title="Admin Dashboard"
+                    >
+                      <LayoutDashboard size={20} strokeWidth={1.5} />
+                    </Link>
+                  )}
+                  <div className="flex items-center space-x-3">
+                    <span className="text-sm text-slate-600 dark:text-slate-400 flex items-center">
+                      <User size={16} className="mr-1" />
+                      {user?.name}
+                    </span>
+                    <button
+                      onClick={logout}
+                      className="p-2 text-slate-500 hover:text-black dark:hover:text-white transition-all duration-300 hover:scale-110"
+                      title="Logout"
+                    >
+                      <LogOut size={20} strokeWidth={1.5} />
+                    </button>
+                  </div>
+                </>
+              ) : (
+                <Link
+                  to="/login"
+                  className="p-2 text-slate-500 hover:text-black dark:hover:text-white transition-all duration-300 hover:scale-110"
+                  title="Login"
+                >
+                  <LogIn size={20} strokeWidth={1.5} />
+                </Link>
+              )}
 
               <button
                 onClick={() => setIsSearchOpen(true)}
